@@ -25,8 +25,8 @@ outstanding looking website using HTML and CSS.
 
 # Resources
 AVL tree Algorithm Website: https://python-patelkrishrb12.wasmer.app/ <br>
-Wasmer: https://wasmer.io/
-Python: https://www.python.org/
-HTML: https://html.com/
-Javascript: https://www.javascript.com/
-Flask: https://flask.palletsprojects.com/en/stable/
+Wasmer: https://wasmer.io/ <br>
+Python: https://www.python.org/ <br>
+HTML: https://html.com/ <br>
+Javascript: https://www.javascript.com/ <br>
+Flask: https://flask.palletsprojects.com/en/stable/ <br>
