@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<style>
+    :root {
+        --dark_gray: #0e0f13;
+        --surface: #16181f;
+        --surface2: #1e2029;
+        --border: #2a2d3a;
+        --purple: #7c6ff7;
+        --purple-dim: #3d3878;
+        --text: #f2f3f5;
+        --muted: #6b6d80;
+        --sans: 'Syne', sans-serif;
+        --mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0;}
+    body{
+        background: var(--dark_gray);
+        color: var(--text);
+        font-family: var(--sans);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column
+    }
+    /* -- Header --*/
+    header {
+        padding: 18px 32px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--surface);
+    }
+    header h1 { font-size: 18px; font-weight: 700;letter-spacing: -0.02em;}
+    header h1 span {color: var(--purple);}
+    .badge {
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 2px;
+        color: var(--purple);
+        letter-spacing: 0.05em;
+    }
+    .api-badge {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: teal;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .api-badge::before {
+        content: '';
+        width: 7px;
+        border-radius: 50%;
+        background: teal;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0%,100%{opacity:1} 50%{opactiy:0.4}
+    }
+/* -- Layout --*/
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .sidebar{
+        width: 280px;
+        flex-shrink: 0;
+        background: var(--surface);
+        border-right: 2px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 20px;
+        overflow-y: auto;
+    }
+
+    .canvas-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+/* -- countrols --*/
+    .section-lable {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    input[type=number] {
+        flex: 1;
+        background-color: var(--dark_gray);
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 14px;
+        padding: 9px 12px;
+        outline: none;
+        transition: border-color .15s;
+    }
+    input[type=number]::-webkit-outer-spin-button {display: none;}
+    input[type=number]:focus { border-color: var(--purple);}
+    .btn-group {display: flex; flex-direction: column; gap: 6px; }
+    button {
+        padding: 9px 14px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .15s, border-color .15s, transform .08s;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    button:hover { background: var(--border); }
+    button:active { transform: scale(0.98);}
+    button.primary {border-color: var(--purple-dim);}
+    button.primary:hover { background: var(--purple-dim);}
+    button.danger { border-color: #0e0f13; color: var(--dark_gray);}
+    button.danger:hover { background: var(--dark_gray);}
+    button.teal { border-color: #1a3830;} 
+    button.teal:hover { background: #122820;}
+    .btn-icon { font-size:  15px;}
+/* -- Stats--*/
+    .stats-grid { font-size: grid; grid-template-columns: 1fr 1fr; gap: 8px;}
+    .stat-card {
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+    }
+    .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;}
+    .stat-val { font-family: var(--mono); font-size: 20px; font-weight: 600; color: var(--purple);}
+/* -- log -- */
+    .log-panel {
+        background: var(--dark_gray);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px;
+        font-family: var(--mono);
+        font-size: 11px;
+        line-height: 1.7;
+        min-height: 80px;
+        max-height: 130px;
+        overflow-y: auto;
+        color: var(--muted);
+    }
+    .log-panel .entry { color: var(--text);}
+    .log-panel .ok { color: teal;}
+    .log-panel .warn { color: yellow};
+    .log-panel .err { color: red;}
+/*-- API trace --*/
+    .api-trace {
+        background: var(--dark_gray);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--muted);
+        max-height: 90px;
+        overflow-y: auto;
+        line-height: 1.6;
+    }
+    .api-trace .method { color: var(--purple); font-weight: 600;}
+    .api-trace .status-ok { color: teal;}
+    .api-trace .status-err { color: red;}
+/* -- legend --*/
+    .legend { display: flex; flex-direction: column; gap: 6px;}
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted);}
+    .legend-dot {width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;}
+/* -- Canvas --*/
+    canvas {
+        flex: 1;
+        display: block;
+        width: 100%;
+    }
+    .canvas-header {
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 11px;
+        font-family: var(--mono);
+        display: flex;
+        gap: 20px;
+    }
+    .canvas-header span b {color: var(--text);}
+    .empty-state {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        pointer-events: none;
+    }
+    .empty-state .big { font-size: 48px; opacity: 0.06; font-weight: 700;}
+    .empty-state p { color: var(--muted); font-size: 13px; margin-top: 8px;}
+    .canvas-wrap { flex: 1; position: relative; overflow: hidden;}
+</style>
+<body>
+    <header><h1>AVL Tree Viualizer</h1>
+        <div class = "badge">O(log n)</div>
+    </header>
+    <div class="main">
+        <aside class = "sidebar">
+
+            <div>
+                <div class="section-label">Operations</div>
+                <div class="input-row">
+                    <input type="number" id="val-input" placeholder="Value" min="-999" max="999">
+                </div>
+                <div class="btn-group">
+                    <button class="primary" onclick="op('insert')"><span class="btn-icon">+</span>Insert</button>
+                    <button onclick="op('delete')"><span class="btn-icon">-</span>Delete</button>
+                    <button class="teal" onclick="op('search')"><span class="btn-icon">?</span>Search</button>
+                    <button class="red" onclick="op('clear')"><span class="btn-icon">x</span>Clear Tree</button>
+                    <button onclick="load_demo()"><span class="btn-icon">;</span>Load Demo</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">Statistics</div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-label">Nodes</div><div class="stat-val" id="stat-n">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Height</div><div class="stat-val" id="stat-h">0</div></div>
+                    <div class="stat-card" style="grid-column: span 2"><div class="stat-label">Last Rotation</div><div class="stat-val" id="stat-r" style="font-size: 14px; padding-top: 2px;">-</div></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">Operation Log</div>
+                <div class="log-panel" id="log">Ready. Enter a value and click Insert</div>
+            </div>
+
+            <div>
+                <div class="section-label">API Trace</div>
+                <div class="api-trace" id="api-trace">Waiting for requests...</div>
+            </div>
+
+            <div class="section-label">Legend</div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div>Normal Node</div>
+                <div class="legend-item"><div class="legend-dot" style="background: teal;"></div>Inserted / Found</div>
+                <div class="legend-item"><div class="legend-dot" style="background: red;"></div>Deleted</div>
+                <div class="legend-item"><div class="legend-dot" style="background: orange;"></div>Search path</div>
+            </div>
+
+
+        </aside>
+        <!-- Canvas area-->
+                <div class="canvas-area">
+                <div class="canvas-header">
+                    <span>Balance factor <b>bf = h(left) - h(right)</b></span>
+                    <span>bf outside {-1,0,1} -> rotation triggered</span>
+                </div>
+                <div class="canvas-wrap">
+                    <div class="empty-state" id="empty-state">
+                        <div class="big">AVL</div>
+                        <p>Insert values to build the tree</p>
+                    </div>
+                    <canvas id="cvs"></canvas>
+                </div>
+            </div>
+    </div>
+    <script src="/static/script.js" >
+    </script>
+</body>
+</html>
