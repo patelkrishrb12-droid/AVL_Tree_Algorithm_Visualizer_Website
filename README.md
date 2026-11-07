@@ -24,7 +24,7 @@ class in HTML to group various different elements such as buttons, canvas area, 
 outstanding looking website using HTML and CSS.
 
 # Resources
-AVL tree Algorithm Website: https://python-patelkrishrb12.wasmer.app/
+AVL tree Algorithm Website: https://python-patelkrishrb12.wasmer.app/ <br>
 Wasmer: https://wasmer.io/
 Python: https://www.python.org/
 HTML: https://html.com/
